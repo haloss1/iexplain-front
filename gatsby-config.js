@@ -1,6 +1,6 @@
 module.exports = {
   siteMetadata: {
-    siteUrl: "https://www.yourdomain.tld",
+    siteUrl: "https://630-exam-haloss1.netlify.app/",
     title: "630-exam",
   },
   plugins: [
