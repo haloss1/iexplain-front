@@ -1,9 +1,4 @@
-import {
-  Switch,
-  Route,
-  NavLink as RouterNavLink,
-  useLocation,
-} from "react-router-dom";
+import { Switch, Route, NavLink as RouterNavLink } from "react-router-dom";
 import Home from "pages/Home";
 import Login from "pages/Login";
 import Register from "pages/Register";
@@ -28,9 +23,6 @@ const NavContainer = styled.div`
 `;
 
 const Routes = () => {
-  const location = useLocation();
-  console.log({ location: location });
-
   return (
     <>
       {process.env.NODE_ENV === "development" ? (
