@@ -63,7 +63,10 @@ const Register = ({ auth }: any) => {
               .email("Invalid email address")
               .required("Required"),
             password: Yup.string()
-              .min(6, "Must be 6 characters or more")
+              .matches(
+                /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+                "Password not secure, must contain 8 characters, one uppercase, one lowercase, one number and one special case character"
+              )
               .required("Required"),
           })}
           onSubmit={(values, { setSubmitting }) => {
