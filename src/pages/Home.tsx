@@ -7,6 +7,7 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import logo from "assets/Haloss1Profile.png";
+import styled from "styled-components";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,11 +21,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+`;
+
 const Home = () => {
   const classes = useStyles();
   return (
-    <>
-      <AppBar position="static">
+    <Content>
+      <AppBar position="sticky">
         <Toolbar>
           <img
             src={logo}
@@ -42,7 +49,20 @@ const Home = () => {
           </Button>
         </Toolbar>
       </AppBar>
-    </>
+      <div
+        style={{
+          flexGrow: 1,
+          display: "flex",
+          color: "white",
+          backgroundColor: "black",
+          justifyContent: "center",
+          alignItems: "center",
+          fontSize: "10vw",
+        }}
+      >
+        Haloss1 Exam
+      </div>
+    </Content>
   );
 };
 
