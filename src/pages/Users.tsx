@@ -1,7 +1,34 @@
-import { Card, Avatar, CardHeader, Button } from "@material-ui/core";
+import {
+  Card,
+  Avatar,
+  CardHeader,
+  Button,
+  AppBar,
+  Toolbar,
+  Typography,
+  Fab,
+  useScrollTrigger,
+  makeStyles,
+  createStyles,
+  Theme,
+  Zoom,
+  Popper,
+  Grow,
+  Paper,
+  ClickAwayListener,
+  MenuList,
+  MenuItem,
+  Snackbar,
+} from "@material-ui/core";
 import getUsers from "functions/getUsers";
-import { useInfiniteQuery } from "react-query";
+import { useInfiniteQuery, useQuery } from "react-query";
 import styled from "styled-components";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import getUserInfo from "functions/getUserInfo";
 
 interface userProps {
   id: number;
@@ -10,6 +37,8 @@ interface userProps {
   last_name: string;
   avatar: string;
 }
+
+// Styled Components start
 
 const GridContainer = styled.div`
   display: grid;
@@ -32,7 +61,45 @@ const StyledCard = styled(Card)`
   }
 `;
 
-const Users = () => {
+const StyledToolbar = styled(Toolbar)`
+  justify-content: space-between;
+`;
+
+const AccountButton = styled(Button)`
+  span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    line-height: normal;
+    text-transform: none;
+    color: white;
+    letter-spacing: normal;
+  }
+`;
+
+// Styled Components end
+
+function Alert(props: AlertProps) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      position: "fixed",
+      bottom: theme.spacing(2),
+      right: theme.spacing(2),
+    },
+  })
+);
+
+const Users = ({ auth }: any) => {
+  const [openAccountMenu, setOpenAccountMenu] = useState(false);
+  const [openNotification, setOpenNotification] = useState(false);
+
+  const anchorRef = useRef<HTMLButtonElement>(null);
+
   const {
     data,
     error,
@@ -45,15 +112,159 @@ const Users = () => {
       lastPage.total_pages === lastPage.page ? undefined : lastPage.page + 1,
   });
 
+  const { data: userInfo } = useQuery("user-info", getUserInfo);
+
+  const ScrollTop = (props: { children: any }) => {
+    const { children } = props;
+    const classes = useStyles();
+    const trigger = useScrollTrigger({
+      disableHysteresis: true,
+      threshold: 100,
+    });
+
+    const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+      const anchor = (
+        (event.target as HTMLDivElement).ownerDocument || document
+      ).querySelector("#back-to-top-anchor");
+
+      if (anchor) {
+        anchor.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    };
+
+    return (
+      <Zoom in={trigger}>
+        <div onClick={handleClick} role="presentation" className={classes.root}>
+          {children}
+        </div>
+      </Zoom>
+    );
+  };
+
+  const handleToggle = () => {
+    setOpenAccountMenu((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event: React.MouseEvent<EventTarget>) => {
+    if (
+      anchorRef.current &&
+      anchorRef.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+
+    setOpenAccountMenu(false);
+  };
+
+  function handleListKeyDown(event: React.KeyboardEvent) {
+    if (event.key === "Tab") {
+      event.preventDefault();
+      setOpenAccountMenu(false);
+    }
+  }
+
+  // return focus to the button when we transitioned from !openAccountMenu -> openAccountMenu
+  const prevOpen = useRef(openAccountMenu);
+  useEffect(() => {
+    if (prevOpen.current === true && openAccountMenu === false) {
+      anchorRef.current!.focus();
+    }
+
+    prevOpen.current = openAccountMenu;
+  }, [openAccountMenu]);
+
+  const handleNotificationClose = (
+    event?: React.SyntheticEvent,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenNotification(false);
+  };
+
   return (
     <div>
+      <AppBar position="sticky">
+        <StyledToolbar>
+          <Typography variant="h6">User list</Typography>
+
+          <div>
+            {userInfo ? (
+              <AccountButton ref={anchorRef} onClick={handleToggle}>
+                <Avatar
+                  src={userInfo.data.avatar}
+                  alt={`${userInfo.data.first_name} ${userInfo.data.last_name}`}
+                />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <span>{`${userInfo.data.first_name} ${userInfo.data.last_name}`}</span>
+                  <span style={{ fontSize: "0.8rem", color: "lightgrey" }}>
+                    {userInfo.data.email}
+                  </span>
+                </div>
+                <ArrowDropDownIcon />
+              </AccountButton>
+            ) : (
+              ""
+            )}
+
+            <Popper
+              open={openAccountMenu}
+              anchorEl={anchorRef.current}
+              role={undefined}
+              transition
+              disablePortal
+            >
+              {({ TransitionProps, placement }) => (
+                <Grow
+                  {...TransitionProps}
+                  style={{
+                    transformOrigin:
+                      placement === "bottom" ? "center top" : "center bottom",
+                  }}
+                >
+                  <Paper>
+                    <ClickAwayListener onClickAway={handleClose}>
+                      <MenuList
+                        autoFocusItem={openAccountMenu}
+                        id="menu-list-grow"
+                        onKeyDown={handleListKeyDown}
+                      >
+                        <MenuItem
+                          component={Link}
+                          to="/"
+                          onClick={() => {
+                            setOpenAccountMenu(false);
+                            setOpenNotification(true);
+                            localStorage.removeItem("auth-token");
+                            localStorage.removeItem("user-id");
+                            auth.setAuthState(false);
+                          }}
+                        >
+                          Logout
+                        </MenuItem>
+                      </MenuList>
+                    </ClickAwayListener>
+                  </Paper>
+                </Grow>
+              )}
+            </Popper>
+          </div>
+        </StyledToolbar>
+      </AppBar>
       {status === "loading" ? (
         <StatusLabel>Loading...</StatusLabel>
       ) : status === "error" ? (
         <StatusLabel>Error: {(error as Error)?.message}</StatusLabel>
       ) : (
         <>
-          <GridContainer>
+          <GridContainer id="back-to-top-anchor">
             {data
               ? data.pages.map((page) =>
                   page.data.map((user: userProps, i: number) => (
@@ -73,7 +284,6 @@ const Users = () => {
                 )
               : ""}
           </GridContainer>
-
           <div style={{ textAlign: "center", paddingBottom: "1rem" }}>
             <Button
               variant="contained"
@@ -88,6 +298,21 @@ const Users = () => {
                 : "Nothing more to load"}
             </Button>
           </div>
+
+          <ScrollTop>
+            <Fab color="secondary" size="small">
+              <KeyboardArrowUpIcon />
+            </Fab>
+          </ScrollTop>
+          <Snackbar
+            open={openNotification}
+            autoHideDuration={6000}
+            onClose={handleNotificationClose}
+          >
+            <Alert onClose={handleNotificationClose} severity="warning">
+              Session closed, see you soon!
+            </Alert>
+          </Snackbar>
         </>
       )}
     </div>

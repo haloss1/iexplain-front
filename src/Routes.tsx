@@ -1,10 +1,16 @@
-import { Switch, Route, NavLink as RouterNavLink } from "react-router-dom";
+import {
+  useHistory,
+  Switch,
+  Route,
+  NavLink as RouterNavLink,
+} from "react-router-dom";
 import Home from "pages/Home";
 import Login from "pages/Login";
 import Register from "pages/Register";
 import Users from "pages/Users";
 import styled from "styled-components";
 import Button from "@material-ui/core/Button";
+import { useState } from "react";
 
 const DevBar = styled.nav`
   display: flex;
@@ -23,6 +29,13 @@ const NavContainer = styled.div`
 `;
 
 const Routes = () => {
+  const [authState, setAuthState] = useState(
+    localStorage.getItem("auth-token")
+  );
+
+  const history = useHistory();
+  const handleClick = () => history.push("/login");
+
   return (
     <>
       {process.env.NODE_ENV === "development" ? (
@@ -41,10 +54,9 @@ const Routes = () => {
                 Home
               </Button>
               <Button
-                component={RouterNavLink}
                 variant="contained"
                 color="secondary"
-                to="/login"
+                onClick={handleClick}
               >
                 Login
               </Button>
@@ -75,20 +87,25 @@ const Routes = () => {
       ) : (
         ""
       )}
-      <Switch>
-        <Route path="/users">
-          <Users />
-        </Route>
-        <Route path="/login">
-          <Login />
-        </Route>
-        <Route path="/register">
-          <Register />
-        </Route>
-        <Route path="/">
-          <Home />
-        </Route>
-      </Switch>
+      {authState ? (
+        <Switch>
+          <Route path="/">
+            <Users auth={{ authState, setAuthState }} />
+          </Route>
+        </Switch>
+      ) : (
+        <Switch>
+          <Route path="/login">
+            <Login auth={{ authState, setAuthState }} />
+          </Route>
+          <Route path="/register">
+            <Register auth={{ authState, setAuthState }} />
+          </Route>
+          <Route path="/">
+            <Home />
+          </Route>
+        </Switch>
+      )}
     </>
   );
 };

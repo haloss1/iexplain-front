@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const getUsers = async ({ pageParam = 1 }) =>
+const getUserInfo = async () =>
   await axios
-    .get(`https://reqres.in/api/users?page=${pageParam}`, {
+    .get(`https://reqres.in/api/users/${localStorage.getItem("user-id")}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
       },
@@ -10,4 +10,4 @@ const getUsers = async ({ pageParam = 1 }) =>
     .then((response) => response.data)
     .catch((e) => new Error(e));
 
-export default getUsers;
+export default getUserInfo;

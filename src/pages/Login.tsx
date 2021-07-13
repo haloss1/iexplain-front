@@ -1,9 +1,7 @@
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
+import { TextField } from "formik-material-ui";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
@@ -11,6 +9,11 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link as RouterLink } from "react-router-dom";
 import Link from "@material-ui/core/Link";
+import { Formik, Field, Form } from "formik";
+import * as Yup from "yup";
+import axios from "axios";
+import { FormLabel } from "@material-ui/core";
+import { useState } from "react";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,7 +48,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = () => {
+const Login = ({ auth }: any) => {
+  const [submitError, setSubmitError] = useState("");
   const classes = useStyles();
 
   return (
@@ -60,57 +64,99 @@ const Login = () => {
           <Typography component="h1" variant="h5">
             Log in
           </Typography>
-          <form className={classes.form} noValidate>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Log In
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link component={RouterLink} to="#">
-                  Forgot password?
-                </Link>
+          <Formik
+            initialValues={{
+              email: "",
+              password: "",
+            }}
+            validationSchema={Yup.object({
+              email: Yup.string()
+                .email("Invalid email address")
+                .required("Required"),
+              password: Yup.string()
+                .min(6, "Must be 6 characters or more")
+                .required("Required"),
+            })}
+            onSubmit={(values, { setSubmitting }) => {
+              setTimeout(() => {
+                axios({
+                  method: "post",
+                  url: "https://reqres.in/api/register",
+                  data: {
+                    email: values.email,
+                    password: values.password,
+                  },
+                })
+                  .then((r) => {
+                    localStorage.setItem("auth-token", r.data.token);
+                    localStorage.setItem("user-id", r.data.id);
+                    auth.setAuthState(true);
+                  })
+                  .catch((e) => {
+                    setSubmitError(
+                      e.response.data.error ? e.response.data.error : e.message
+                    );
+                    setTimeout(() => {
+                      setSubmitError("");
+                    }, 10000);
+                  });
+                setSubmitting(false);
+              }, 400);
+            }}
+          >
+            <Form className={classes.form} noValidate>
+              {submitError ? (
+                <FormLabel error>Error: {submitError}</FormLabel>
+              ) : (
+                ""
+              )}
+              <br />
+              <br />
+              <Field
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                component={TextField}
+                type="email"
+              />
+              <Field
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                id="password"
+                autoComplete="current-password"
+                component={TextField}
+                type="password"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+              >
+                Log In
+              </Button>
+              <Grid container>
+                <Grid item>
+                  <Link component={RouterLink} to="/register">
+                    Don't have an account? Register
+                  </Link>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Link component={RouterLink} to="/register">
-                  Don't have an account? Register
-                </Link>
-              </Grid>
-            </Grid>
-            <br />
-            <div style={{ textAlign: "center" }}>Made with ❤️ by Haloss1</div>
-          </form>
+              <br />
+              <div style={{ textAlign: "center" }}>Made with ❤️ by Haloss1</div>
+            </Form>
+          </Formik>
         </div>
       </Grid>
     </Grid>
