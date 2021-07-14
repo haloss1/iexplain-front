@@ -74,7 +74,7 @@ const Login = ({ auth }: any) => {
                 .email("Invalid email address")
                 .required("Required"),
               password: Yup.string()
-                .min(6, "Must be 6 characters or more")
+                .min(8, "Must be 8 characters or more")
                 .required("Required"),
             })}
             onSubmit={(values, { setSubmitting }) => {
