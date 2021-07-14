@@ -42,7 +42,7 @@ const Home = () => {
             Haloss1 630 Exam
           </Typography>
           <Button component={Link} color="inherit" to="/login">
-            Login
+            Log in
           </Button>
           <Button component={Link} color="inherit" to="/register">
             Register

@@ -247,7 +247,7 @@ const Users = ({ auth }: any) => {
                             auth.setAuthState(false);
                           }}
                         >
-                          Logout
+                          Log out
                         </MenuItem>
                       </MenuList>
                     </ClickAwayListener>
