@@ -258,13 +258,14 @@ const Users = ({ auth }: any) => {
           </div>
         </StyledToolbar>
       </AppBar>
+      <div id="back-to-top-anchor" />
       {status === "loading" ? (
         <StatusLabel>Loading...</StatusLabel>
       ) : status === "error" ? (
         <StatusLabel>Error: {(error as Error)?.message}</StatusLabel>
       ) : (
         <>
-          <GridContainer id="back-to-top-anchor">
+          <GridContainer>
             {data
               ? data.pages.map((page) =>
                   page.data.map((user: userProps, i: number) => (
