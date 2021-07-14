@@ -1,6 +1,10 @@
 <h1 align="center">
 630 Test Exam</h1>
 
+## 🌎 App preview site
+
+https://630-exam-haloss1.netlify.app/
+
 ## 🚀 Quick start
 
 1.  **Install dependencies.**
