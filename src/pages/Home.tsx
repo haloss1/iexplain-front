@@ -39,7 +39,7 @@ const Home = () => {
             alt="Logo"
           />
           <Typography variant="h6" className={classes.title}>
-            Haloss1 630 Exam
+            Haloss1 React App Demo
           </Typography>
           <Button component={Link} color="inherit" to="/login">
             Log in
@@ -57,10 +57,16 @@ const Home = () => {
           backgroundColor: "black",
           justifyContent: "center",
           alignItems: "center",
-          fontSize: "10vw",
+          fontSize: "5vw",
+          flexDirection: "column",
         }}
       >
-        Haloss1 Exam
+        Haloss1 React App Demo
+        <div style={{ fontSize: "2vw" }}>Credentials:</div>
+        <div style={{ fontSize: "2vw" }}>Email: eve.holt@reqres.in</div>
+        <div style={{ fontSize: "2vw" }}>
+          Password: Anything over 8 characters
+        </div>
       </div>
     </Content>
   );
