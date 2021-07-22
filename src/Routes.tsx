@@ -1,9 +1,4 @@
-import {
-  useHistory,
-  Switch,
-  Route,
-  NavLink as RouterNavLink,
-} from "react-router-dom";
+import { useHistory, Switch, Route, NavLink } from "react-router-dom";
 import Home from "pages/Home";
 import Login from "pages/Login";
 import Register from "pages/Register";
@@ -46,7 +41,7 @@ const Routes = () => {
             <br />
             <NavContainer>
               <Button
-                component={RouterNavLink}
+                component={NavLink}
                 variant="contained"
                 color="secondary"
                 to="/Home"
@@ -61,7 +56,7 @@ const Routes = () => {
                 Login
               </Button>
               <Button
-                component={RouterNavLink}
+                component={NavLink}
                 variant="contained"
                 color="secondary"
                 to="/register"
@@ -69,7 +64,7 @@ const Routes = () => {
                 Register
               </Button>
               <Button
-                component={RouterNavLink}
+                component={NavLink}
                 variant="contained"
                 color="secondary"
                 to="/users"

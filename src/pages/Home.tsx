@@ -62,11 +62,18 @@ const Home = () => {
         }}
       >
         IExplain
-        <div style={{ fontSize: "2vw" }}>Credentials:</div>
-        <div style={{ fontSize: "2vw" }}>Email: eve.holt@reqres.in</div>
-        <div style={{ fontSize: "2vw" }}>
-          Password: Anything over 8 characters
+        <div style={{ fontSize: "2vw", marginBottom: "1rem" }}>
+          I want to learn:{" "}
+          <span style={{ fontSize: "2vw", color: "yellow" }}>Node JS</span>
         </div>
+        <Button
+          component={Link}
+          variant="contained"
+          color="secondary"
+          to="/register"
+        >
+          Get started
+        </Button>
       </div>
     </Content>
   );
