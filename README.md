@@ -3,7 +3,9 @@ IExplain</h1>
 
 ## 🌎 App preview site
 
-https://630-exam-haloss1.netlify.app/
+[![Netlify Status](https://api.netlify.com/api/v1/badges/049b5550-a207-4aec-981c-f59bded1c0ed/deploy-status)](https://app.netlify.com/sites/iexplain/deploys)
+
+https://iexplain.netlify.app/
 
 ## 🚀 Quick start
 
