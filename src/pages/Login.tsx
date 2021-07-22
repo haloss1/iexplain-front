@@ -81,15 +81,14 @@ const Login = ({ auth }: any) => {
               setTimeout(() => {
                 axios({
                   method: "post",
-                  url: "https://reqres.in/api/register",
+                  url: "https://iebe-dev.herokuapp.com/auth",
                   data: {
                     email: values.email,
                     password: values.password,
                   },
                 })
                   .then((r) => {
-                    localStorage.setItem("auth-token", r.data.token);
-                    localStorage.setItem("user-id", r.data.id);
+                    localStorage.setItem("auth-token", r.data.accessToken);
                     auth.setAuthState(true);
                   })
                   .catch((e) => {

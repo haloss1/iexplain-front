@@ -73,7 +73,7 @@ const Register = ({ auth }: any) => {
             setTimeout(() => {
               axios({
                 method: "post",
-                url: "https://reqres.in/api/register",
+                url: "https://iebe-dev.herokuapp.com/users",
                 data: {
                   firstName: values.firstName,
                   lastName: values.lastName,
@@ -83,7 +83,6 @@ const Register = ({ auth }: any) => {
               })
                 .then((r) => {
                   localStorage.setItem("auth-token", r.data.token);
-                  localStorage.setItem("user-id", r.data.id);
                   auth.setAuthState(true);
                 })
                 .catch((e) => {

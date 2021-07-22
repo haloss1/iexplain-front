@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const getUsers = async ({ pageParam = 1 }) =>
+const getUsers = async ({ pageParam = 0 }) =>
   await axios
-    .get(`https://reqres.in/api/users?page=${pageParam}`, {
+    .get(`https://iebe-dev.herokuapp.com/users?page=${pageParam}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
       },

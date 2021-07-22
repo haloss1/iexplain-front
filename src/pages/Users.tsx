@@ -21,21 +21,22 @@ import {
   Snackbar,
 } from "@material-ui/core";
 import getUsers from "functions/getUsers";
-import { useInfiniteQuery, useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import styled from "styled-components";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
-import getUserInfo from "functions/getUserInfo";
+import jwtDecode from "jwt-decode";
 
 interface userProps {
-  id: number;
+  id: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   avatar: string;
+  skills: [];
 }
 
 // Styled Components start
@@ -112,7 +113,15 @@ const Users = ({ auth }: any) => {
       lastPage.total_pages === lastPage.page ? undefined : lastPage.page + 1,
   });
 
-  const { data: userInfo } = useQuery("user-info", getUserInfo);
+  const userInfo: {
+    userId: string;
+    email: string;
+    name: string;
+    avatar: string;
+  } =
+    localStorage.getItem("auth-token") === undefined || null
+      ? { userId: "", email: "", name: "User Not logged in", avatar: "" }
+      : jwtDecode(`${localStorage.getItem("auth-token")}`);
 
   const ScrollTop = (props: { children: any }) => {
     const { children } = props;
@@ -184,6 +193,11 @@ const Users = ({ auth }: any) => {
     setOpenNotification(false);
   };
 
+  const logOut = () => {
+    localStorage.removeItem("auth-token");
+    auth.setAuthState(false);
+  };
+
   return (
     <div>
       <AppBar position="sticky">
@@ -191,11 +205,11 @@ const Users = ({ auth }: any) => {
           <Typography variant="h6">User list</Typography>
 
           <div>
-            {userInfo ? (
+            {
               <AccountButton ref={anchorRef} onClick={handleToggle}>
                 <Avatar
-                  src={userInfo.data.avatar}
-                  alt={`${userInfo.data.first_name} ${userInfo.data.last_name}`}
+                  src={userInfo.avatar ? userInfo.avatar : ""}
+                  alt={`${userInfo.name}`}
                 />
                 <div
                   style={{
@@ -203,16 +217,14 @@ const Users = ({ auth }: any) => {
                     flexDirection: "column",
                   }}
                 >
-                  <span>{`${userInfo.data.first_name} ${userInfo.data.last_name}`}</span>
+                  <span>{`${userInfo.name}`}</span>
                   <span style={{ fontSize: "0.8rem", color: "lightgrey" }}>
-                    {userInfo.data.email}
+                    {userInfo.email}
                   </span>
                 </div>
                 <ArrowDropDownIcon />
               </AccountButton>
-            ) : (
-              ""
-            )}
+            }
 
             <Popper
               open={openAccountMenu}
@@ -242,9 +254,7 @@ const Users = ({ auth }: any) => {
                           onClick={() => {
                             setOpenAccountMenu(false);
                             setOpenNotification(true);
-                            localStorage.removeItem("auth-token");
-                            localStorage.removeItem("user-id");
-                            auth.setAuthState(false);
+                            logOut();
                           }}
                         >
                           Log out
@@ -268,18 +278,24 @@ const Users = ({ auth }: any) => {
           <GridContainer>
             {data
               ? data.pages.map((page) =>
-                  page.data.map((user: userProps, i: number) => (
+                  page.map((user: userProps, i: number) => (
                     <StyledCard key={i}>
                       <CardHeader
                         avatar={
                           <Avatar
-                            alt={`${user.first_name} ${user.last_name}`}
+                            alt={`${user.firstName} ${user.lastName}`}
                             src={user.avatar}
                           />
                         }
-                        title={`${user.first_name} ${user.last_name}`}
+                        title={`${user.firstName} ${user.lastName}`}
                         subheader={user.email}
                       />
+                      <div style={{ padding: "0 1rem 1rem" }}>
+                        Skills:
+                        {user.skills.map((e) => (
+                          <div>{e}</div>
+                        ))}
+                      </div>
                     </StyledCard>
                   ))
                 )
