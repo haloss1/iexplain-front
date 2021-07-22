@@ -39,7 +39,7 @@ const Home = () => {
             alt="Logo"
           />
           <Typography variant="h6" className={classes.title}>
-            Haloss1 React App Demo
+            IExplain
           </Typography>
           <Button component={Link} color="inherit" to="/login">
             Log in
@@ -61,7 +61,7 @@ const Home = () => {
           flexDirection: "column",
         }}
       >
-        Haloss1 React App Demo
+        IExplain
         <div style={{ fontSize: "2vw" }}>Credentials:</div>
         <div style={{ fontSize: "2vw" }}>Email: eve.holt@reqres.in</div>
         <div style={{ fontSize: "2vw" }}>

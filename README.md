@@ -1,5 +1,5 @@
 <h1 align="center">
-630 Test Exam</h1>
+IExplain</h1>
 
 ## 🌎 App preview site
 
@@ -10,7 +10,7 @@ https://630-exam-haloss1.netlify.app/
 1.  **Install dependencies.**
 
     ```shell
-    cd 630-exam/
+    cd iexplain-front/
     yarn
     ```
 
